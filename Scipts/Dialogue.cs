@@ -9,17 +9,24 @@ public class Dialogue : MonoBehaviour
     [SerializeField]
     List<DialogueElement> _dialogue;
 
-    public void Advance() 
-    {
-        if(_dialogue[index].HasOptions()) return;
+    public void Start() {
+        index = 0;
+    }
 
+    private void Advance() 
+    {
         index++;
     }
 
     public void Select(int option) 
     {
+        if(!_dialogue[index].HasOptions()) 
+        {
+            Advance();
+            return;
+        }
         _dialogue[index].options[option].Do();
-        _dialogue[index].options = null;
+        index += _dialogue[index].options[option].offsetIndex;
     }
 
     public DialogueElement GetDialogue() 
@@ -35,17 +42,11 @@ public class DialogueElement
     public string message;
     [SerializeField]public List<DialogueOption> options;
 
-    public bool HasOptions() {
+    public bool HasOptions() 
+    {
+        Debug.Log(options.Count);
         return options.Count > 0;
     }
 }
 
-[System.Serializable]
-public class DialogueOption 
-{
-    public string content;
-    public void Do()
-    {
-        
-    }
-}
+
